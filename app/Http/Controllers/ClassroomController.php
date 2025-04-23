@@ -63,11 +63,20 @@ class ClassroomController extends Controller
     public function destroy(Classroom $class)
     {
         try {
+            if ($class->students()->exists() || $class->teachers()->exists()) {
+                return response()->json([
+                    'message' => 'Kelas tidak dapat dihapus karena masih ada relasi dari kelas ini yang terdaftar',
+                ], 422);
+            }
+
             $class->delete();
             return response()->json('success', 200);
         } catch (\Exception $e) {
-            return response()->json($e->getMessage(), 500);
+            echo $e->getMessage();
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
         }
-        
+
     }
 }

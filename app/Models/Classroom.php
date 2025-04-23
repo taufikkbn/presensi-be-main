@@ -24,4 +24,16 @@ class Classroom extends Model
             $model->{$model->getKeyName()} = (string) Str::uuid();
         });
     }
+
+    // Define relationship with students
+    public function students()
+    {
+        return $this->hasMany(Student::class, 'class_id', 'id');
+    }
+
+    // Define relationship with teachers
+    public function teachers()
+    {
+        return $this->hasMany(Teacher::class, 'class_id', 'id');
+    }
 }
