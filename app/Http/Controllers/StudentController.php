@@ -46,7 +46,10 @@ class StudentController extends Controller
             $data->save();
             $studentAccount = event(new CreateStudentAccount($data, $validated['email']));
             DB::commit();
-            return redirect()->back()->with('successMsg', 'Data Siswa Berhasil Ditambahkan');
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Siswa Berhasil Ditambahkan'
+            ]);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json($e->getMessage(), 500);

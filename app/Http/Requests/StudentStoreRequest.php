@@ -35,4 +35,12 @@ class StudentStoreRequest extends FormRequest
             'email' => 'required|email|unique:users,email'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'pob.required' => 'Tempat Lahir Wajib Diisi',
+            'dob.required' => 'Tanggal Lahir Wajib Diisi',
+        ];
+    }
 }

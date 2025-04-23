@@ -215,9 +215,21 @@
                         $('#studentForm')[0].reset();
                         location.reload();
                     },
-                    error: function(response) {
-                        // Tampilkan alert error
-                        alert('Terjadi kesalahan: ' + response.responseJSON);
+                    error: function(xhr, status, error) {
+                        // Try to get the response text or JSON
+                        let errorMessage = 'Terjadi kesalahan';
+
+                        if (xhr.responseJSON) {
+                            // If server returns JSON response
+                            errorMessage += ': ' + xhr.responseJSON.message;
+                        } else if (xhr.responseText) {
+                            // If server returns text response
+                            errorMessage += ': ' + xhr.responseText;
+                        } else {
+                            errorMessage += ': ' + error;
+                        }
+
+                        alert(errorMessage);
                     }
                 });
             });
