@@ -20,13 +20,13 @@ class InfoController extends Controller
         try {
             $student = Student::where('nipd', Auth::guard('api')->user()->student->nipd)->firstOrFail();
             $sixMonthsAgo = Carbon::now()->subMonths(6)->startOfDay();
-            
+
             $totalPresence = Presence::where('nipd', $student->nipd)->where('created_at', '>=', $sixMonthsAgo)->count();
 
             $totalAbsencesDueToPermission = Absence::where('nipd', $student->nipd)->permissions()->semester()->count();
             $totalAbsencesDueToSickness = Absence::where('nipd', $student->nipd)->sickness()->semester()->count();
             $totalAbsencesWithoutNote = Absence::where('nipd', $student->nipd)->withoutNotes()->semester()->count();
-            
+
 
             $rekapData = [
                 'total_presences' => $totalPresence,

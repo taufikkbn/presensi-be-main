@@ -49,7 +49,7 @@
         <form action="" method="POST" id="editForm">
             {{ csrf_field() }}
             @method('PATCH')
-            <x-input-field label="ID Kelas" type="text" name="class_id" isReadOnly="true"></x-input-field>
+{{--            <x-input-field label="ID Kelas" type="text" name="class_id" isReadOnly="true"></x-input-field>--}}
             <x-input-field label="Nama Kelas" type="text" name="class_name_edit"></x-input-field>
             <x-select-field label="Tipe Kelas" name="type_class_edit" :options="$options"></x-select-field>
             <input type="submit" value="Simpan Data" class="btn btn-primary w-100">

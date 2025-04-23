@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\LoginRequest;
 use Auth;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -17,12 +18,9 @@ use App\Http\Resources\StudentResource;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $validated = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string'
-        ]);
+        $validated = $request->validated();
         $credentials = $request->only('email', 'password');
         $token = Auth::guard('api')->attempt($credentials);
         if (!$token) {

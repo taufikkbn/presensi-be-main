@@ -62,11 +62,14 @@
                         <span>Log Aktivitas</span>
                     </a>
                 </li>
-                <li class="sidebar-item  ">
-                    <a href="index.html" class='sidebar-link'>
-                        <i class="bi bi-door-closed-fill"></i>
-                        <span>Logout</span>
-                    </a>
+                <li class="sidebar-item">
+                    <form method="POST" action="{{ route('logout') }}" class="sidebar-link-form">
+                        @csrf
+                        <a href="#" class="sidebar-link" onclick="event.preventDefault(); this.closest('form').submit();">
+                            <i class="bi bi-door-closed-fill"></i>
+                            <span>Logout</span>
+                        </a>
+                    </form>
                 </li>
                 <li class="sidebar-item">
                     <a href="index.html" class='sidebar-link'>

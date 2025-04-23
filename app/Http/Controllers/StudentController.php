@@ -36,18 +36,17 @@ class StudentController extends Controller
         DB::beginTransaction();
         try {
             $validated = $request->validated();
-            
+
             $image = $request->file('photo');
             $filename = Str::random(8) . '.' . $image->getClientOriginalExtension();
             $path = $image->storeAs('/public/photo/' . $validated['nipd'], $filename);
-            
+
             $data = Student::create($validated);
             $data->photo = $filename;
             $data->save();
             $studentAccount = event(new CreateStudentAccount($data, $validated['email']));
             DB::commit();
             return redirect()->back()->with('successMsg', 'Data Siswa Berhasil Ditambahkan');
-            return response()->json($asw, 200);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json($e->getMessage(), 500);
@@ -58,7 +57,7 @@ class StudentController extends Controller
         DB::beginTransaction();
         try {
             $validated = $request->validated();
-            
+
             $image = $request->file('photoEdit');
             if ($image) {
                 $filename = Str::random(8) . '.' . $image->getClientOriginalExtension();
@@ -68,7 +67,7 @@ class StudentController extends Controller
                     'photo' => $validated['photoEdit'], // Updated the photo field here
                 ]);
             }
-            
+
             $student->update([
                 'nipd' => $validated['nipdEdit'],
                 'name' => $validated['nameEdit'],
@@ -82,7 +81,7 @@ class StudentController extends Controller
             ]);
 
             event(new UpdateStudentAccount($student, $validated['emailEdit']));
-            
+
             DB::commit();
             return redirect()->back()->with('successMsg', 'Data Siswa Berhasil Diperbarui');
         } catch (\Exception $e) {
@@ -91,7 +90,7 @@ class StudentController extends Controller
         }
     }
 
-    
+
     public function destroy(Student $student)
     {
         DB::beginTransaction();
