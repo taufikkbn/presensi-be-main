@@ -65,6 +65,129 @@
             <div id="map" style="width: 100%; height: 700px"></div>
         </div>
     </div>
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Draggable Map with Radius</title>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <style>
+            #map {
+                height: 600px;
+                width: 100%;
+            }
+            .controls {
+                margin-top: 10px;
+                border: 1px solid transparent;
+                border-radius: 2px 0 0 2px;
+                box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                height: 32px;
+                outline: none;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            }
+            #radius-control {
+                background-color: #fff;
+                padding: 10px;
+                margin: 10px;
+                max-width: 300px;
+            }
+        </style>
+    </head>
+    <body>
+    <div id="radius-control">
+        <label for="radius">Radius (meters):</label>
+        <input type="range" id="radius" min="100" max="5000" step="100" value="{{ $defaultRadius }}">
+        <span id="radius-value">{{ $defaultRadius }}</span> meters
+    </div>
+    <div id="map"></div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8BILPfxBe2rP4fVfpPZ3Rq7eo7xvc9Ew&libraries=places"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        let map;
+        let marker;
+        let circle;
+        let defaultLat = {{ $defaultLat }};
+        let defaultLng = {{ $defaultLng }};
+        let defaultRadius = {{ $defaultRadius }};
+
+        function initMap() {
+            const initialPosition = { lat: defaultLat, lng: defaultLng };
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: initialPosition,
+            });
+
+            // Create the initial marker
+            marker = new google.maps.Marker({
+                position: initialPosition,
+                map: map,
+                draggable: true,
+                title: "Drag me!"
+            });
+
+            // Create the initial circle
+            circle = new google.maps.Circle({
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.35,
+                map: map,
+                center: initialPosition,
+                radius: defaultRadius
+            });
+
+            // Update circle when marker is dragged
+            marker.addListener("drag", function(event) {
+                updateCircle(event.latLng);
+            });
+
+            // Update circle when marker drag ends
+            marker.addListener("dragend", function(event) {
+                updateCircle(event.latLng);
+                saveLocation(event.latLng.lat(), event.latLng.lng(), circle.getRadius());
+            });
+
+            // Update circle when radius changes
+            document.getElementById("radius").addEventListener("input", function() {
+                const radius = parseInt(this.value);
+                document.getElementById("radius-value").textContent = radius;
+                circle.setRadius(radius);
+                saveLocation(marker.getPosition().lat(), marker.getPosition().lng(), radius);
+            });
+        }
+
+        function updateCircle(position) {
+            circle.setCenter(position);
+        }
+
+        function saveLocation(lat, lng, radius) {
+            $.ajax({
+                url: "{{ route('perimeter.store') }}",
+                method: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    latitude: lat,
+                    longitude: lng,
+                    radius: radius
+                },
+                success: function(response) {
+                    console.log("Location saved:", response);
+                },
+                error: function(xhr) {
+                    console.error("Error saving location:", xhr.responseText);
+                }
+            });
+        }
+
+        // Initialize the map
+        initMap();
+    </script>
+    </body>
+    </html>
 @endsection
 
 {{--@pushOnce('custom-script')--}}

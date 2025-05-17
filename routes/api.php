@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\PresenceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LBSController;
@@ -27,6 +28,12 @@ Route::middleware('apiAuth')->group(function () {
     Route::get('presence-out', [PresenceOutController::class, 'check']);
 
     Route::get('presence/history', [HistoryPresenceController::class, 'index']);
+
+    Route::prefix('presence')->group(function() {
+        Route::post('', [PresenceController::class, 'presence']);
+        Route::post('face', [PresenceController::class, 'registerFaceUser']);
+        Route::get('face', [PresenceController::class, 'getFaceUser']);
+    });
 
     Route::prefix('teacher')->group(function() {
         Route::get('info', [InfoController::class, 'teacher']);

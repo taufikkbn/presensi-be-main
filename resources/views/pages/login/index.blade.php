@@ -43,7 +43,7 @@
                 <form method="POST" action="{{ route('login.submit') }}">
                     @csrf
                     <div class="divider d-flex align-items-center my-4">
-                        <p class="text-center fw-bold mx-3 mb-0">Login CMS Absensi SMP Demon Slayer</p>
+                        <p class="text-center fw-bold mx-3 mb-0">Login CMS Absensi</p>
                     </div>
 
                     @error('errorMessage')

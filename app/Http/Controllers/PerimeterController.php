@@ -10,7 +10,13 @@ class PerimeterController extends Controller
     public function index()
     {
         $perimeter = Perimeter::first();
-        return view('pages.perimeters.index', compact('perimeter'));
+
+        // Default coordinates (can be loaded from DB or config)
+        $defaultLat = 40.7128; // New York as default
+        $defaultLng = -74.0060;
+        $defaultRadius = 1000; // meters
+
+        return view('pages.perimeters.index', compact('perimeter', 'defaultLat', 'defaultLng', 'defaultRadius'));
     }
 
     public function store(Request $request)
