@@ -47,7 +47,7 @@
             <x-input-field label="Address" type="text" name="address"/>
             <x-input-field label="Latitude" type="number" name="lat" step="any" min="-90" max="90"/>
             <x-input-field label="Longitude" type="number" name="long" step="any" min="-180" max="180"/>
-            <x-input-field label="Radius (Km)" type="number" name="radius" step="any" min="0"/>
+            <x-input-field label="Radius (M)" type="number" name="radius" step="any" min="0"/>
             <input type="submit" value="Simpan Data" class="btn btn-primary w-100">
         </form>
     </x-modal>
@@ -69,7 +69,7 @@
                 </tr>
                 <tr>
                     <td>Radius</td>
-                    <td>{{ $perimeter->radius }} KM</td>
+                    <td>{{ $perimeter->radius }} M</td>
                 </tr>
             </table>
         </div>
