@@ -37,12 +37,11 @@ class StudentController extends Controller
         try {
             $validated = $request->validated();
 
-            $image = $request->file('photo');
-            $filename = Str::random(8) . '.' . $image->getClientOriginalExtension();
-            $path = $image->storeAs('/public/photo/' . $validated['nipd'], $filename);
+            $path = $request->file('photo')->store('public/student_faces');;
+            $publicPath = Storage::url($path);
 
             $data = Student::create($validated);
-            $data->photo = $filename;
+            $data->photo = $publicPath;
             $data->save();
             $studentAccount = event(new CreateStudentAccount($data, $validated['email']));
             DB::commit();
@@ -63,11 +62,11 @@ class StudentController extends Controller
 
             $image = $request->file('photoEdit');
             if ($image) {
-                $filename = Str::random(8) . '.' . $image->getClientOriginalExtension();
-                $path = $image->storeAs('/public/photo/' . $validated['nipdEdit'], $filename);
-                $validated['photoEdit'] = $filename;
+                $path = $request->file('photoEdit')->store('public/student_faces');
+                $publicPath = Storage::url($path);
+
                 $student->update([
-                    'photo' => $validated['photoEdit'], // Updated the photo field here
+                    'photo' => $publicPath, // Updated the photo field here
                 ]);
             }
 

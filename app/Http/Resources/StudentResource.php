@@ -52,7 +52,7 @@ class StudentResource extends JsonResource
             'religion_detail' => $religion,
             'address' => $this->address,
             'residence_type' => $this->residence_type,
-            'photo' => Storage::url('photo/' . $this->nipd . '/' . $this->photo)
+            'photo' => $this->photo
         ];
     }
 }
