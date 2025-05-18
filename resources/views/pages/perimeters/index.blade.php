@@ -44,7 +44,7 @@
     <x-modal title="Tambah Data Lokasi" idModal="editModal">
         <form id="formEditRadius" action="{{ route('perimeter.store') }}" method="POST">
             {{ csrf_field() }}
-            <x-textarea-field label="Address" name="address" rows="4"></x-textarea-field>
+            <x-text-area-field label="Address" name="address" rows="4"/>
             <x-input-field label="Latitude" type="number" name="lat" step="any" min="-90" max="90"/>
             <x-input-field label="Longitude" type="number" name="long" step="any" min="-180" max="180"/>
             <x-input-field label="Radius (Km)" type="number" name="radius" step="any" min="0"/>
