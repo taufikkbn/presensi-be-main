@@ -11,24 +11,27 @@ class PerimeterController extends Controller
     {
         $perimeter = Perimeter::first();
 
-        // Default coordinates (can be loaded from DB or config)
-        $defaultLat = 40.7128; // New York as default
-        $defaultLng = -74.0060;
-        $defaultRadius = 1000; // meters
-
-        return view('pages.perimeters.index', compact('perimeter', 'defaultLat', 'defaultLng', 'defaultRadius'));
+        return view('pages.perimeters.index', compact('perimeter'));
     }
 
     public function store(Request $request)
     {
         try {
             $perimeter = Perimeter::first();
-            $perimeter->radius = $request->radius;
-            $perimeter->save();
-            return response()->json('success', 200);
-        } catch (\Exception $e) {
-            return response()->json($e->getMessage(), 500);
 
+            if ($perimeter) {
+                $perimeter->address = $request->address;
+                $perimeter->lat = $request->lat;
+                $perimeter->long = $request->long;
+                $perimeter->radius = $request->radius;
+                $perimeter->save();
+            } else {
+//                Perimeter::create($request->all());
+            }
+
+            return redirect()->back()->with('successMsg', 'Perimeter updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update perimeter: ' . $e->getMessage());
         }
     }
 }

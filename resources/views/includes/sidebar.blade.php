@@ -34,12 +34,12 @@
                         <span>Data Siswa</span>
                     </a>
                 </li>
-                <li class="sidebar-item  ">
-                    <a href="index.html" class='sidebar-link'>
-                        <i class="bi bi-file-earmark-fill"></i>
-                        <span>Laporan Presensi</span>
-                    </a>
-                </li>
+{{--                <li class="sidebar-item  ">--}}
+{{--                    <a href="index.html" class='sidebar-link'>--}}
+{{--                        <i class="bi bi-file-earmark-fill"></i>--}}
+{{--                        <span>Laporan Presensi</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
 
                 <li class="sidebar-title">Setting</li>
                 <li class="sidebar-item  {{ Route::is('perimeter*') ? 'active' : '' }}">
@@ -56,12 +56,12 @@
                 </li>
 
                 <li class="sidebar-title">MISC</li>
-                <li class="sidebar-item  ">
-                    <a href="index.html" class='sidebar-link'>
-                        <i class="bi bi-activity"></i>
-                        <span>Log Aktivitas</span>
-                    </a>
-                </li>
+{{--                <li class="sidebar-item  ">--}}
+{{--                    <a href="index.html" class='sidebar-link'>--}}
+{{--                        <i class="bi bi-activity"></i>--}}
+{{--                        <span>Log Aktivitas</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
                 <li class="sidebar-item">
                     <form method="POST" action="{{ route('logout') }}" class="sidebar-link-form">
                         @csrf

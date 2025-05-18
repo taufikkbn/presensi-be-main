@@ -15,8 +15,17 @@
     <div class="card-header d-flex justify-content-between">
         <h4 class="card-title">Lokasi Presensi</h4>
         <div>
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addModal">Edit
-                Radius</button>
+            <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                data-address="{{ $perimeter->address }}"
+                data-lat="{{ $perimeter->lat }}"
+                data-long="{{ $perimeter->long }}"
+                data-radius="{{ $perimeter->radius }}"
+                data-bs-toggle="modal"
+                data-bs-target="#editModal">
+                Edit Radius
+            </button>
         </div>
     </div>
 @endsection
@@ -24,7 +33,7 @@
 @if ($sessionMsg)
     @section('alert-section')
         <div class="alert alert-{{ \Session::has('successMsg') ? 'success' : 'danger' }} alert-dismissible fade show"
-            role="alert">
+             role="alert">
             {{ $sessionMsg }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -32,10 +41,13 @@
 @endif
 
 @section('content')
-    <x-modal title="Tambah Data Lokasi" idModal="addModal">
+    <x-modal title="Tambah Data Lokasi" idModal="editModal">
         <form id="formEditRadius" action="{{ route('perimeter.store') }}" method="POST">
             {{ csrf_field() }}
-            <x-input-field label="Radius (Km)" type="number" name="radius"></x-input-field>
+            <x-textarea-field label="Address" name="address" rows="4"></x-textarea-field>
+            <x-input-field label="Latitude" type="number" name="lat" step="any" min="-90" max="90"/>
+            <x-input-field label="Longitude" type="number" name="long" step="any" min="-180" max="180"/>
+            <x-input-field label="Radius (Km)" type="number" name="radius" step="any" min="0"/>
             <input type="submit" value="Simpan Data" class="btn btn-primary w-100">
         </form>
     </x-modal>
@@ -45,19 +57,19 @@
             <table class="table">
                 <tr>
                     <td>Alamat</td>
-                    <td>'$perimeter->address'</td>
+                    <td>{{ $perimeter->address }}</td>
                 </tr>
                 <tr>
                     <td>Lat</td>
-                    <td>$perimeter->lat</td>
+                    <td>{{ $perimeter->lat }}</td>
                 </tr>
                 <tr>
                     <td>Long</td>
-                    <td>$perimeter->long</td>
+                    <td>{{ $perimeter->long }}</td>
                 </tr>
                 <tr>
                     <td>Radius</td>
-                    <td>$perimeter->radius Km</td>
+                    <td>{{ $perimeter->radius }} KM</td>
                 </tr>
             </table>
         </div>
@@ -76,6 +88,7 @@
                 height: 600px;
                 width: 100%;
             }
+
             .controls {
                 margin-top: 10px;
                 border: 1px solid transparent;
@@ -86,6 +99,7 @@
                 outline: none;
                 box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
             }
+
             #radius-control {
                 background-color: #fff;
                 padding: 10px;
@@ -95,28 +109,53 @@
         </style>
     </head>
     <body>
-    <div id="radius-control">
-        <label for="radius">Radius (meters):</label>
-        <input type="range" id="radius" min="100" max="5000" step="100" value="{{ $defaultRadius }}">
-        <span id="radius-value">{{ $defaultRadius }}</span> meters
-    </div>
+    {{--    <div id="radius-control">--}}
+    {{--        <label for="radius">Radius (meters):</label>--}}
+    {{--        <input type="range" id="radius" min="100" max="5000" step="100" value="{{ $defaultRadius }}">--}}
+    {{--        <span id="radius-value">{{ $defaultRadius }}</span> meters--}}
+    {{--    </div>--}}
     <div id="map"></div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8BILPfxBe2rP4fVfpPZ3Rq7eo7xvc9Ew&libraries=places"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuRgkpiJkMEGRX2ohxIOkwn8SZ-9wrr_M&libraries=places"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    {{-- Edit Modal Script --}}
+    <script>
+        $('#editModal').on('show.bs.modal', function (event) {
+            const button = $(event.relatedTarget); // Button yang diklik
+
+            const address = button.data('address');
+            const lat = button.data('lat');
+            const long = button.data('long');
+            const radius = button.data('radius');
+
+            console.log(address, lat, long, radius);
+
+            var modal = $(this);
+
+            modal.find('textarea[name="address"]').val(address);
+            modal.find('input[name="lat"]').val(lat);
+            modal.find('input[name="long"]').val(long);
+            modal.find('input[name="radius"]').val(radius);
+        });
+    </script>
+
+
+    {{--  Google Maps Script  --}}
     <script>
         let map;
         let marker;
         let circle;
-        let defaultLat = {{ $defaultLat }};
-        let defaultLng = {{ $defaultLng }};
-        let defaultRadius = {{ $defaultRadius }};
+        let defaultLat = {{ $perimeter->lat }};
+        let defaultLng = {{ $perimeter->long }};
+        let defaultRadius = {{ $perimeter->radius }};
 
         function initMap() {
-            const initialPosition = { lat: defaultLat, lng: defaultLng };
+            const initialPosition = {lat: defaultLat, lng: defaultLng};
 
             map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 12,
+                zoom: 20,
                 center: initialPosition,
             });
 
@@ -124,7 +163,7 @@
             marker = new google.maps.Marker({
                 position: initialPosition,
                 map: map,
-                draggable: true,
+                draggable: false, // Make the marker draggable
                 title: "Drag me!"
             });
 
@@ -141,18 +180,18 @@
             });
 
             // Update circle when marker is dragged
-            marker.addListener("drag", function(event) {
+            marker.addListener("drag", function (event) {
                 updateCircle(event.latLng);
             });
 
             // Update circle when marker drag ends
-            marker.addListener("dragend", function(event) {
+            marker.addListener("dragend", function (event) {
                 updateCircle(event.latLng);
                 saveLocation(event.latLng.lat(), event.latLng.lng(), circle.getRadius());
             });
 
             // Update circle when radius changes
-            document.getElementById("radius").addEventListener("input", function() {
+            document.getElementById("radius").addEventListener("input", function () {
                 const radius = parseInt(this.value);
                 document.getElementById("radius-value").textContent = radius;
                 circle.setRadius(radius);
@@ -174,10 +213,10 @@
                     longitude: lng,
                     radius: radius
                 },
-                success: function(response) {
+                success: function (response) {
                     console.log("Location saved:", response);
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     console.error("Error saving location:", xhr.responseText);
                 }
             });
